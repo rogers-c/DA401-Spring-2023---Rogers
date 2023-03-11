@@ -1,1 +1,5 @@
 # DA401-Spring-2023---Rogers
+
+### Home Advantage in the English Premier League: An Analysis of its Components
+
+For my Data Analytics senior seminar course at Denison University, I will be working on a semester-long data analysis project focusing on the components of home advantage in the 2021-2022 season of the English Premier League. The goal of this project is to quantify the effects that factors such as match attendance, crowd density, referee bias, and travel distance have on home advantage (HA) This repository contains two datasets in .csv format. DA401FinalMatchStats.csv contains individual match data (fouls, goals scored, corners, cards) for each of the 380 matches in the 2021-2022 English Premier League season. DA401Stadiums.csv contains data (capacity, region, pitch dimensions) on each of the 20 stadiums for the teams competing in the 2021-2022 EPL season. In addition to the .csv datasets, there is a R markdown file containing code that cleans and merges the two datasets together as well as my regression analysis.
