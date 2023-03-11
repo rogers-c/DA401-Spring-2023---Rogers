@@ -1,0 +1,53 @@
+---
+title: "DA401 Initial Results"
+author: "Cole Rogers"
+date: "2023-03-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(dplyr)
+
+EPLmatches = read.csv("./DA401FinalMatchStats.csv")
+EPLstadiums = read.csv("./DA401Stadiums.csv")
+
+#EPLstadiums
+#EPLmatches
+```
+
+```{r}
+
+# Cleaning Data
+
+EPLmatches$Attendance <- as.numeric(gsub(",","",EPLmatches$Attendance))
+EPLstadiums <- EPLstadiums %>% select(-contains('eplha'))
+EPLstadiums <- EPLstadiums %>% select(-contains('X'))
+
+# Merging Data
+
+EPLfull <- merge(EPLmatches, EPLstadiums, by="stadiumID")
+
+# Creation of crowdDensity variable
+
+EPLfull$crowdDensity <- EPLfull$Attendance/EPLfull$capacity
+
+head(EPLfull)
+```
+
+```{r}
+
+# Initial Regression
+
+haLM <- lm(HA ~ Attendance + crowdDensity, data = EPLfull)
+
+# Initial Results
+
+summary(haLM)
+
+```
+
