@@ -1,0 +1,97 @@
+---
+title: "DA401 Initial Results"
+author: "Cole Rogers"
+date: "2023-03-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(dplyr)
+library(ggplot2)
+library(corrplot)
+library(xtable)
+library(Hmisc)
+
+EPLmatches = read.csv("./DA401FinalMatchStats.csv")
+EPLstadiums = read.csv("./DA401Stadiums.csv")
+
+#EPLstadiums
+#EPLmatches
+```
+
+```{r}
+
+# Cleaning Data
+
+EPLmatches$Attendance <- as.numeric(gsub(",","",EPLmatches$Attendance))
+EPLmatches$Attendance <- EPLmatches$Attendance/1000
+EPLstadiums <- EPLstadiums %>% select(-contains('eplha'))
+EPLstadiums <- EPLstadiums %>% select(-contains('X'))
+
+# Merging Data
+
+EPLfull <- merge(EPLmatches, EPLstadiums, by="stadiumID")
+
+# Creation of crowdDensity variable
+
+EPLfull$crowdDensity <- EPLfull$Attendance/EPLfull$capacity
+EPLfull$crowdDensity <- EPLfull$crowdDensity * 1000
+
+head(EPLfull)
+```
+
+```{r}
+
+# Exploratory Analysis
+
+ggplot(EPLstadiums)
+
+modelData <- EPLfull %>% select(c(HA, AwayDistMiles, AwayDistMin, Attendance, crowdDensity, yearBuilt, HF, AF, HC, AC))
+
+modelCor <- cor(modelData)
+
+corrplot(modelCor, tl.pos = "lt", tl.col = "black", tl.srt = 45)
+
+mcor <- round(cor(modelCor), 2)
+mcor
+
+upper<-mcor
+upper[upper.tri(mcor)]<-""
+upper<-as.data.frame(upper)
+upper
+
+barchart1<-ggplot(data=EPLfull, aes(x=clubID, y=HA)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label = yearBuilt), vjust=8, size=2) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle=90, hjust=1))
+
+barchart1
+
+```
+
+```{r}
+
+# Initial Regression
+
+haLM <- lm(HA ~ crowdDensity + AwayDistMin + HF + Attendance + yearBuilt, data = EPLfull)
+
+# Initial Results
+
+summary(haLM)
+
+```
+
+```{r}
+
+# Validation
+
+vif(haLM)
+
+```
+
